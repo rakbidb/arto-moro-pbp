@@ -282,7 +282,7 @@ Virtual Environment adalah suatu alat yang digunakan sebagai wadah untuk mengenk
     - Memiliki kelebihan dalam proses binding data
     <hr>
     
-## References
+## REFERENSI
 - [Tutorial 0 dan Tutorial 1](https://pbp-fasilkom-ui.github.io/ganjil-2024/docs)
 - [Definition Model-View-ViewModel (MVVM)](https://www.techtarget.com/whatis/definition/Model-View-ViewModel)
 - [MVC Framework - Introduction](https://www.tutorialspoint.com/mvc_framework/mvc_framework_introduction.htm)
@@ -507,7 +507,7 @@ Virtual Environment adalah suatu alat yang digunakan sebagai wadah untuk mengenk
 ![alt-text](images/tugas-3/json_by_id.png)
 <hr>
 
-## References
+## REFERENSI
 - [Tutorial 2](https://pbp-fasilkom-ui.github.io/ganjil-2024/docs/tutorial-2)
 - [Get vs Post](https://www.javatpoint.com/get-vs-post)
 - [Handling an HTML Form – GET and POST Methods, and Data Encoding [Dev Concepts #38]](https://softuni.org/dev-concepts/handling-an-html-form/)

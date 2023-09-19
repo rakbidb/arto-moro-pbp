@@ -14,7 +14,8 @@ def show_main(request):
         'name': 'Rakha Abid Bangsawan', # Nama kamu
         'class': 'PBP A', # Kelas PBP kamu
         'app_name': 'Arto Moro PBP',
-        'products': products
+        'products': products,
+        'total_products': products.__len__(),
     }
 
     return render(request, "main.html", context)

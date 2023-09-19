@@ -7,4 +7,3 @@ class Product(models.Model):
     description = models.TextField()
     amount = models.IntegerField()
     category = models.TextField()
-    

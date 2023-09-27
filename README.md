@@ -713,7 +713,7 @@ Sebenarnya cookies tidak berbahaya karena cookie hanyalah sebuah data dan bersif
 
 <hr>
 
-## References
+## REFERENSI
 - [Tutorial 3](https://pbp-fasilkom-ui.github.io/ganjil-2024/docs/tutorial-3)
 - [Slide 5 "Form, Authentication, Session, and Cookie"](https://scele.cs.ui.ac.id/mod/resource/view.php?id=151405)
 - [Django Cookie](https://www.javatpoint.com/django-cookie)

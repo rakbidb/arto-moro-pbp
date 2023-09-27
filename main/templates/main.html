@@ -30,6 +30,23 @@
                 <td>{{product.amount}}</td>
                 <td>{{product.description}}</td>
                 <td>{{product.date_added}}</td>
+                <td>
+                    <a href="edit-amount/{{product.id}}/0">
+                        <button type="button">
+                        Tambah Product
+                        </button>
+                    </a>
+                    <a href="edit-amount/{{product.id}}/1">
+                        <button type="button">
+                        Kurang Product
+                        </button>
+                    </a>
+                    <a href="edit-amount/{{product.id}}/2">
+                        <button type="button">
+                        Delete Product
+                        </button>
+                    </a>
+                </td>
             </tr>
         {% endfor %}
     </table>
@@ -39,6 +56,13 @@
     <a href="{% url 'main:create_product' %}">
         <button>
             Add New Product
+        </button>
+    </a>
+
+    <a href="{% url 'main:logout' %}">
+        <h5>Sesi terakhir login: {{ last_login }}</h5>
+        <button>
+            Logout
         </button>
     </a>
 

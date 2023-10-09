@@ -1,5 +1,5 @@
 from django.urls import path
-from main.views import show_main, create_product, show_xml, show_json, show_xml_by_id, show_json_by_id, register, login_user, logout_user, edit_amount # , show_products
+from main.views import show_main, create_product, show_xml, show_json, show_xml_by_id, show_json_by_id, register, login_user, logout_user, edit_amount, edit_product, delete_product, increment_product, decrement_product, remove_product # , show_products
 
 app_name = 'main'
 
@@ -14,4 +14,9 @@ urlpatterns = [
     path('login/', login_user, name='login'),
     path('logout/', logout_user, name='logout'), 
     path('edit-amount/<int:id>/<int:amount_change>/', edit_amount, name='edit_amount'),
+    path('add_product/<int:product_id>/', increment_product, name='add_product'),
+    path('decrement_product/<int:product_id>/', decrement_product, name='decrement_product'),
+    path('remove_product/<int:product_id>/',remove_product, name='remove_product'),
+    path('edit-product/<int:id>', edit_product, name='edit_product'),
+    path('delete/<int:id>', delete_product, name='delete_product'), # sesuaikan dengan nama fungsi yang dibuat
 ]

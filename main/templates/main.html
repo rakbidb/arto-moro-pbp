@@ -2,68 +2,140 @@
 
 {% block content %}
 
-    <h1>Arto Moro Page</h1>
+<!DOCTYPE html>
+<html>
 
-    <h5>Name:</h5>
-    <p>{{name}}</p>
+<style>
+    .edit-button:hover {
+        background-color: #499fb7;
+        color: #fff; 
+        border: 0;
+    }
 
-    <h5>Class:</h5>
-    <p>{{class}}</p>
+    .card-container {
+        display: flex;
+        gap: 30px;
+        flex-wrap: wrap;
+        card-flex-direction:row;
+    }
 
-    <h3>Kamu menyimpan {{total_products}} product pada aplikasi Arto Moro PBP!</h3>
+    
+    .card-container .card:last-child {
+        background-color: #dea7db; /* Warna latar belakang yang berbeda untuk elemen terakhir */
+    }
 
-    <table>
+</style>
+
+<head>
+    <title>Arto Moro</title>
+</head>
+
+<nav class="navbar bg-body-tertiary">
+    <div class="container-fluid">
+        <h1 style="color:black;font-family: 'Lucida bright';"><span><strong>Halo!  {{name}} 🥳🙌 </strong> </span> </h1>
+        <a href="{% url 'main:logout' %}" >
+            <button class = "font-bold py-1 px-4 rounded edit-button border 0 " >
+                Logout
+            </button>
+        </a>
+    </div>
+</nav>
+
+
+<body style = "width: 100%; height: 100vh; background-color:powderblue;">
+    <div style = "padding: 3%;">
         <tr>
-            <th>Name</th>
-            <th>Price</th>
-            <th>Amount</th>
-            <th>Description</th>
-            <th>Date Added</th>
-        </tr>
-    
-        {% comment %} Berikut cara memperlihatkan data produk di bawah baris ini {% endcomment %}
-    
-        {% for product in products %}
-            <tr>
-                <td>{{product.name}}</td>
-                <td>{{product.price}}</td>
-                <td>{{product.amount}}</td>
-                <td>{{product.description}}</td>
-                <td>{{product.date_added}}</td>
-                <td>
-                    <a href="edit-amount/{{product.id}}/0">
-                        <button type="button">
-                        Tambah Product
-                        </button>
-                    </a>
-                    <a href="edit-amount/{{product.id}}/1">
-                        <button type="button">
-                        Kurang Product
-                        </button>
-                    </a>
-                    <a href="edit-amount/{{product.id}}/2">
-                        <button type="button">
-                        Delete Product
-                        </button>
-                    </a>
-                </td>
-            </tr>
+            <td>
+                <p style="color:black;font-family: 'Lucida bright';">Name: {{name}}</p>
+            </td>
+                <p style="color:black;font-family: 'Lucida bright';">Class: {{class}} </p>
+            <td>
+                <p style="color:black;font-family: 'Lucida bright';">Sesi terakhir login: {{ last_login }}</p>
+                
+            </td>
+            <td>
+                <a href="{% url 'main:create_product' %}">
+                    <button class = "font-bold py-1 px-4 rounded edit-button border 0" style = "padding: 10px 20px;" >
+                        Add New Product
+                    </button>
+                </a>
+            </td>
+        </tr>   
+    </div>
+
+    {% comment %} Berikut cara memperlihatkan data produk di bawah baris ini {% endcomment %}
+    <div class="card-container">
+        {% for product in products%}
+            <div class="card" style="width: 22rem; padding:1%;margin-left: 30px; padding-left:10 px ; padding-bottom:10px; padding-right: 10px ;">
+                <div class="card-body ">
+                    <h5 class="card-title">{{ product.name }}</h5>
+                    <p class="card-text">
+                        <table>
+                            <tr class="add-colortext">
+                                <td>Price</td>
+                                <td>{{ product.price }}</td>
+                            </tr>
+                            <tr class="add-colortext">
+                                <td>Amount</td>
+                                <td>{{ product.amount }}</td>
+                            </tr>
+                            <tr class="add-colortext">
+                                <td>Description</td>
+                                <td>{{ product.description }}</td>
+                            </tr>
+                            <tr class="add-colortext">
+                                <td>Date Added</td>
+                                <td>{{ product.date_added }}</td>
+                            </tr>
+                        </table>
+                        <table>
+                            <tr class="add-colortext">
+                                <td>
+                                    <form action="{% url 'main:add_product' product.id %}" method="post">
+                                        {% csrf_token %}
+                                        <button class="font-bold py-1 px-4 rounded edit-button border-0"
+                                            style="color: rgb(0, 0, 0); font-weight: bolder; align-items: center" type="submit"
+                                            name="Tambah" style="padding: 10px 20px;">
+                                            +
+                                        </button>
+                                    </form>
+                                </td>
+                                <td>
+                                    <form action="{% url 'main:decrement_product' product.id %}" method="post">
+                                        {% csrf_token %}
+                                        <button class="font-bold py-1 px-4 rounded edit-button border-0"
+                                            style="color: rgb(0, 0, 0); font-weight: bolder; align-items: center" type="submit"
+                                            name="Kurang" style="padding: 10px 20px;">
+                                            -
+                                        </button>
+                                    </form>
+                                </td>
+                                <td>
+                                    <form action="{% url 'main:remove_product' product.id %}" method="post">
+                                        {% csrf_token %}
+                                        <button class="font-bold py-1 px-4 rounded edit-button border-0"
+                                            style="color: red; align-items: center" type="submit" name="Hapus" class="edit-button"
+                                            style="padding: 10px 20px;">
+                                            delete
+                                        </button>
+                                    </form>
+                                </td>
+                                <td>
+                                    <a href="{% url 'main:edit_product' product.pk %}">
+                                        <button class="font-bold py-1 px-4 rounded edit-button border-0"
+                                            style="padding: 10px 20px;">
+                                            Edit
+                                        </button>
+                                    </a>
+                                </td>
+                            </tr>
+                        </table>
+                    </p>
+                </div>
+            </div>
         {% endfor %}
-    </table>
-    
-    <br />
-    
-    <a href="{% url 'main:create_product' %}">
-        <button>
-            Add New Product
-        </button>
-    </a>
+    </div>
+</body>
 
-    <a href="{% url 'main:logout' %}">
-        <h5>Sesi terakhir login: {{ last_login }}</h5>
-        <button>
-            Logout
-        </button>
-    </a>
-
+</html>
 {% endblock content %}

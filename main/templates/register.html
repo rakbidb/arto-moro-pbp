@@ -4,31 +4,82 @@
     <title>Register</title>
 {% endblock meta %}
 
-{% block content %}  
+{% block content %} 
+<style>
+    .center-table {
+        margin: auto;
+        width: 100%;
+        /* Atur lebar tabel sesuai kebutuhan Anda */
+    }
 
-<div class = "login">
-    
-    <h1>Register</h1>  
 
-        <form method="POST" >  
-            {% csrf_token %}  
-            <table>  
-                {{ form.as_table }}  
-                <tr>  
-                    <td></td>
-                    <td><input type="submit" name="submit" value="Daftar"/></td>  
-                </tr>  
-            </table>  
-        </form>
+    .center-table {
+    width: 100%;
+    max-width: 650px; /* Sesuaikan lebar maksimum sesuai kebutuhan Anda */
+    margin: 0 auto;
+    }
 
-    {% if messages %}  
-        <ul>   
-            {% for message in messages %}  
-                <li>{{ message }}</li>  
-                {% endfor %}  
-        </ul>   
-    {% endif %}
+    .center-table input[type="text"], 
+    .center-table input[type="password"] {
+        width: 100%;
+        padding: 2px;
+        margin-bottom: 5px;
+        border: 1px solid #ccc;
+        border-radius: 1px;
+        font-family: 'Lucida Bright', sans-serif;
+        font-size: 15px;
+        color: black;
+    }
 
-</div>  
+    .center-table input[type="submit"] {
+        background-color: #d5d7db;
+        color: #fff;
+        border: none;
+        border-radius: 5px;
+        padding: 10px 20px;
+        cursor: pointer;
+        font-family: 'Lucida Bright', sans-serif;
+        font-size: 16 px;
+    }
+
+    .center-table input[type="submit"]:hover {
+        background-color: #b0e0e6;
+    }
+
+
+
+
+
+</style>
+
+<div style = "width: 100%; height: 100vh; background-color:powderblue;">
+    <div class = "login"  style="width: 100%; min-height: 80vh; display: flex; justify-content: center; align-items: center;">
+        <div class="font-sans hover:font-serif"
+        style="width: 900px; border-radius: 20px;  margin: auto; display: flex; flex-direction: column; padding: 4rem 4rem; background-color: rgb(255, 255, 255);">
+            <h1 style="color: black; text-align: center;font-family: 'Lucida bright'; font-size: 50px;">Register</h1>  
+
+                <form method="POST" >  
+                    {% csrf_token %}  
+                    <table class=" center-table">  
+                        {{ form.as_table }}  
+                        <tr>  
+                            <td style="color:black;font-family: 'Lucida bright';"></td>
+                            <td><input type="submit" name="submit" value="Daftar"/></td> 
+
+                        </tr>  
+                    </table>  
+                </form>
+
+            {% if messages %}  
+                <ul>   
+                    {% for message in messages %}  
+                        <li>{{ message }}</li>  
+                    {% endfor %}  
+                </ul>   
+            {% endif %}
+        </div>
+
+    </div> 
+</div> 
 
 {% endblock content %}

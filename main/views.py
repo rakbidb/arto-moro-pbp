@@ -109,3 +109,47 @@ def edit_amount(request, id, amount_change):
         product.delete()
 
     return HttpResponseRedirect(reverse('main:show_main'))
+
+def increment_product(request, product_id):
+    if request.method == 'POST' and 'Tambah' in request.POST:
+        product = Product.objects.get(id = product_id)
+        product.amount += 1
+        product.save()
+    return HttpResponseRedirect(reverse('main:show_main'))
+
+def decrement_product(request, product_id):
+    if request.method == 'POST' and 'Kurang' in request.POST:
+        product = Product.objects.get(id = product_id)
+        if product.amount > 0 :
+            product.amount -= 1
+        product.save()
+    return HttpResponseRedirect(reverse('main:show_main'))
+
+def remove_product(request, product_id):
+    if request.method == 'POST' and 'Hapus' in request.POST:
+        product = Product.objects.get(id = product_id)
+        product.delete()
+    return HttpResponseRedirect(reverse('main:show_main'))
+
+def edit_product(request, id):
+    # Get product berdasarkan ID
+    product = Product.objects.get(pk = id)
+
+    # Set product sebagai instance dari form
+    form = ProductForm(request.POST or None, instance=product)
+
+    if form.is_valid() and request.method == "POST":
+        # Simpan form dan kembali ke halaman awal
+        form.save()
+        return HttpResponseRedirect(reverse('main:show_main'))
+
+    context = {'form': form}
+    return render(request, "edit_product.html", context)
+
+def delete_product(request, id):
+    # Get data berdasarkan ID
+    product = Product.objects.get(pk = id)
+    # Hapus data
+    product.delete()
+    # Kembali ke halaman awal
+    return HttpResponseRedirect(reverse('main:show_main'))

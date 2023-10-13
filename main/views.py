@@ -1,31 +1,36 @@
 import datetime
-from django.contrib.auth.forms import UserCreationForm
-from django.contrib.auth import authenticate, login, logout
-from django.contrib.auth.decorators import login_required
-from django.contrib import messages
-from django.shortcuts import render, redirect
-from django.http import HttpResponseRedirect
+from django.shortcuts import render
+from django.http import HttpResponseRedirect, HttpResponseNotFound
 from main.forms import ProductForm
 from django.urls import reverse
+from .models import Product
 from django.http import HttpResponse
 from django.core import serializers
-from main.models import Product
+from django.shortcuts import redirect
+from django.contrib.auth.forms import UserCreationForm
+from django.contrib import messages
+from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.decorators import login_required
+from django.views.decorators.csrf import csrf_exempt
+
+
+
 
 # Create your views here.
 @login_required(login_url='/login')
 def show_main(request):
     products = Product.objects.filter(user=request.user)
+    
 
     context = {
-        'name': request.user.username, # Nama kamu
-        'class': 'PBP A', # Kelas PBP kamu
-        'app_name': 'Arto Moro PBP',
+        'name': request.user.username,
+        'class': 'PBP F', 
         'products': products,
-        'total_products': products.__len__(),
         'last_login': request.COOKIES['last_login'],
     }
 
     return render(request, "main.html", context)
+
 
 def create_product(request):
     form = ProductForm(request.POST or None)
@@ -35,10 +40,10 @@ def create_product(request):
         product.user = request.user
         product.save()
         return HttpResponseRedirect(reverse('main:show_main'))
-
+    
     context = {'form': form}
     return render(request, "create_product.html", context)
-
+ 
 def show_xml(request):
     data = Product.objects.all()
     return HttpResponse(serializers.serialize("xml", data), content_type="application/xml")
@@ -88,28 +93,6 @@ def logout_user(request):
     response.delete_cookie('last_login')
     return response
 
-@login_required(login_url='login/')
-def edit_amount(request, id, amount_change):
-    product = Product.objects.get(id=id)
-    # "+1" Button clicked --> Increment amount by 1
-    if (amount_change == 0):
-        product.amount += 1
-        product.save()
-
-    # "-1" Button clicked --> Decrement amount by 1
-    elif (amount_change == 1):
-        if (product.amount > 0):
-            product.amount -= 1
-            product.save()
-        if (product.amount == 0): # jika produk sudah habis = delete
-            product.delete()
-        
-    # "Delete Product" Button clicked --> Delete the product
-    else:
-        product.delete()
-
-    return HttpResponseRedirect(reverse('main:show_main'))
-
 def increment_product(request, product_id):
     if request.method == 'POST' and 'Tambah' in request.POST:
         product = Product.objects.get(id = product_id)
@@ -146,10 +129,23 @@ def edit_product(request, id):
     context = {'form': form}
     return render(request, "edit_product.html", context)
 
-def delete_product(request, id):
-    # Get data berdasarkan ID
-    product = Product.objects.get(pk = id)
-    # Hapus data
-    product.delete()
-    # Kembali ke halaman awal
-    return HttpResponseRedirect(reverse('main:show_main'))
+def get_product_json(request):
+    product_item = Product.objects.filter(user=request.user)
+    return HttpResponse(serializers.serialize('json', product_item))
+
+@csrf_exempt
+def add_product_ajax(request):
+    if request.method == 'POST':
+        name = request.POST.get("name")
+        price = request.POST.get("price")
+        description = request.POST.get("description")
+        date_added = request.POST.get("date_added")
+        amount = request.POST.get("amount")
+        user = request.user
+
+        new_product = Product(name=name, price=price, description=description, user=user, date_added=date_added, amount=amount)
+        new_product.save()
+
+        return HttpResponse(b"CREATED", status=201)
+
+    return HttpResponseNotFound()

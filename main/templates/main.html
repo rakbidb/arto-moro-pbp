@@ -27,12 +27,12 @@
 </style>
 
 <head>
-    <title>Arto Moro</title>
+    <title>StockTracker</title>
 </head>
 
 <nav class="navbar bg-body-tertiary">
     <div class="container-fluid">
-        <h1 style="color:black;font-family: 'Lucida bright';"><span><strong>Halo!  {{name}} 🥳🙌 </strong> </span> </h1>
+        <h1 style="color:black;font-family: 'Lucida bright';"><span><strong>Halo !  {{name}} 👋👋 </strong> </span> </h1>
         <a href="{% url 'main:logout' %}" >
             <button class = "font-bold py-1 px-4 rounded edit-button border 0 " >
                 Logout
@@ -41,6 +41,41 @@
     </div>
 </nav>
 
+<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="exampleModalLabel">Add New Product</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="form" onsubmit="return false;">
+                    {% csrf_token %}
+                    <div class="mb-3">
+                        <label for="name" class="col-form-label">Name:</label>
+                        <input type="text" class="form-control" id="name" name="name"></input>
+                    </div>
+                    <div class="mb-3">
+                        <label for="price" class="col-form-label">Price:</label>
+                        <input type="number" class="form-control" id="price" name="price"></input>
+                    </div>
+                    <div class="mb-3">
+                        <label for="amount" class="col-form-label">amount:</label>
+                        <input type="number" class="form-control" id="amount" name="amount"></input>
+                    </div>
+                    <div class="mb-3">
+                        <label for="description" class="col-form-label">Description:</label>
+                        <textarea class="form-control" id="description" name="description"></textarea>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" id="button_add" data-bs-dismiss="modal">Add Product</button>
+            </div>
+        </div>
+    </div>
+</div>
 
 <body style = "width: 100%; height: 100vh; background-color:powderblue;">
     <div style = "padding: 3%;">
@@ -57,85 +92,133 @@
                 <a href="{% url 'main:create_product' %}">
                     <button class = "font-bold py-1 px-4 rounded edit-button border 0" style = "padding: 10px 20px;" >
                         Add New Product
-                    </button>
-                </a>
+                    </button>   
+                </a>     
+                <button type="button" 
+                class="font-bold py-1 px-4 rounded edit-button border-0"
+                style="color: rgb(0, 0, 0);  align-items: center" type="submit"
+                data-bs-toggle="modal" data-bs-target="#exampleModal" 
+                style = "padding: 10px 20px;">Add Product by AJAX</button>
+
             </td>
         </tr>   
     </div>
 
     {% comment %} Berikut cara memperlihatkan data produk di bawah baris ini {% endcomment %}
-    <div class="card-container">
-        {% for product in products%}
+    <div id="product_table"></div>
+
+</body>
+
+</html>
+
+<script>
+    async function getProducts() {
+        return fetch("{% url 'main:get_product_json' %}").then((res) => res.json())
+    }
+
+    async function refreshProducts() {
+        document.getElementById("product_table").innerHTML = ""
+        const products = await getProducts()
+        let htmlString = `<div class="card-container">`
+        products.forEach((item, index) => {
+            htmlString += `\n
             <div class="card" style="width: 22rem; padding:1%;margin-left: 30px; padding-left:10 px ; padding-bottom:10px; padding-right: 10px ;">
                 <div class="card-body ">
-                    <h5 class="card-title">{{ product.name }}</h5>
+                    <h5 class="card-title">${ item.fields.name }</h5>
                     <p class="card-text">
                         <table>
                             <tr class="add-colortext">
                                 <td>Price</td>
-                                <td>{{ product.price }}</td>
+                                <td>${ item.fields.price }</td>
                             </tr>
                             <tr class="add-colortext">
                                 <td>Amount</td>
-                                <td>{{ product.amount }}</td>
+                                <td>${ item.fields.amount }</td>
                             </tr>
                             <tr class="add-colortext">
                                 <td>Description</td>
-                                <td>{{ product.description }}</td>
+                                <td>${ item.fields.description }</td>
                             </tr>
                             <tr class="add-colortext">
                                 <td>Date Added</td>
-                                <td>{{ product.date_added }}</td>
+                                <td>${ item.fields.date_added }</td>
                             </tr>
                         </table>
                         <table>
                             <tr class="add-colortext">
                                 <td>
-                                    <form action="{% url 'main:add_product' product.id %}" method="post">
+                                    <form action="add_product/${item.pk}/" method="post">
                                         {% csrf_token %}
                                         <button class="font-bold py-1 px-4 rounded edit-button border-0"
                                             style="color: rgb(0, 0, 0); font-weight: bolder; align-items: center" type="submit"
-                                            name="Tambah" style="padding: 10px 20px;">
+                                            name="Tambah" style="padding: 10px 20px;" onclick="incrementAmount(${item.pk})">
                                             +
                                         </button>
                                     </form>
                                 </td>
                                 <td>
-                                    <form action="{% url 'main:decrement_product' product.id %}" method="post">
+                                    <form action="decrement_product/${item.pk}/" method="post">
                                         {% csrf_token %}
                                         <button class="font-bold py-1 px-4 rounded edit-button border-0"
                                             style="color: rgb(0, 0, 0); font-weight: bolder; align-items: center" type="submit"
-                                            name="Kurang" style="padding: 10px 20px;">
+                                            name="Kurang" style="padding: 10px 20px;" onclick="decrementAmount(${item.pk})">
                                             -
                                         </button>
                                     </form>
                                 </td>
                                 <td>
-                                    <form action="{% url 'main:remove_product' product.id %}" method="post">
+                                    <form action="remove_product/${item.pk}/" method="post">
                                         {% csrf_token %}
                                         <button class="font-bold py-1 px-4 rounded edit-button border-0"
                                             style="color: red; align-items: center" type="submit" name="Hapus" class="edit-button"
-                                            style="padding: 10px 20px;">
+                                            style="padding: 10px 20px;" onclick="deleteProduct(${item.pk})">
                                             delete
                                         </button>
                                     </form>
                                 </td>
                                 <td>
-                                    <a href="{% url 'main:edit_product' product.pk %}">
-                                        <button class="font-bold py-1 px-4 rounded edit-button border-0"
-                                            style="padding: 10px 20px;">
+                                    <a href="edit-product/${item.pk}">
+                                        <button class="font-bold py-1 px-4 rounded edit-button border-0" style="padding: 10px 20px;">
                                             Edit
                                         </button>
-                                    </a>
+                                    </a>    
                                 </td>
                             </tr>
                         </table>
                     </p>
                 </div>
-            </div>
-        {% endfor %}
-    </div>
-</body>
+            </div>` 
+        })
+        
+        document.getElementById("product_table").innerHTML = htmlString
+    }
 
-</html>
+    async function incrementAmount(id) {
+      const response = await fetch(`/increment-amount/${id}`);
+      refreshProducts();
+    }
+
+    async function decrementAmount(id) {
+      const response = await fetch(`/decrement-amount/${id}`);
+      refreshProducts();
+    }
+    async function deleteProduct(id) {
+    const response = await fetch(`/delete-amount/${id}`);
+      refreshProducts();
+    }
+
+    refreshProducts()
+
+    function addProduct() {
+        fetch("{% url 'main:add_product_ajax' %}", {
+            method: "POST",
+            body: new FormData(document.querySelector('#form'))
+        }).then(refreshProducts)
+
+        document.getElementById("form").reset()
+        return false
+    }
+
+    document.getElementById("button_add").onclick = addProduct
+</script>
 {% endblock content %}

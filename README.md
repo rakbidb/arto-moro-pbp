@@ -804,3 +804,178 @@ Note: Ada banyak tag lainnya yang belum saya explore
    - Sesuaikan warna, gaya, dan respon desain yang diinginkan
    - Cek hasil pada localhost
 <hr>
+
+# Tugas 6
+
+## 1. Jelaskan perbedaan antara asynchronous programming dengan synchronous programming.
+- Synchronous:
+    - Request dijalankan secara sinkronus (berurutan)
+    - Program akan menunggu request saat ini selesai dieksekusi sebelum melanjutkan eksekusi request selanjutnya
+    - Implementasinya lebih mudah karena requestnya  idlakukan secara berurutan
+- Asynchronous:
+    - Request dijalankan secara asinkronus (paralel)
+    - Program tidak perlu menunggu request saat ini selesai dieksekusi sebelum melanjutkan eksekusi request selanjutnya, dapat dilakukan secara paralel
+    - Implementasinya lebih sulit karena dapat terjadi beberapa request secara beramaan
+<hr>
+
+## 2. Dalam penerapan JavaScript dan AJAX, terdapat penerapan paradigma event-driven programming. Jelaskan maksud dari paradigma tersebut dan sebutkan salah satu contoh penerapannya pada tugas ini.
+- Event-driven proogramming adalah paradigma di mana aplikasi akan memberikan respon terhadap suatu event tertentu sesuai yang telah didefinsikan
+- Event-handler dapat didefinisikan sebagai function pada section script ataupun implementasi-implementasi lainnya
+- Contohnya, jika kita memiliki tombol yang dapat membuka sebuah modal dengan form untuk menambahkan item dalam suatu html, kita dapat menambahkan event listener untuk mengirimkan data ke server ketika tombol tersebut diklik.
+<hr>
+
+## 3. Jelaskan penerapan asynchronous programming pada AJAX.
+- Request dijalankan secara asinkronus (paralel)
+- Program tidak perlu menunggu request saat ini selesai dieksekusi sebelum melanjutkan eksekusi request selanjutnya, dapat dilakukan secara paralel
+- Dengan menerpakan asynchronous programming pada AJAX, user tidak harus menunggu respon dari server, sehingga browser user akan tetap responsif
+- Event-handler dapat didefinisikan sebagai function pada section script ataupun implementasi-implementasi lainnya
+<hr>
+
+## 4. Pada PBP kali ini, penerapan AJAX dilakukan dengan menggunakan Fetch API daripada library jQuery. Bandingkanlah kedua teknologi tersebut dan tuliskan pendapat kamu teknologi manakah yang lebih baik untuk digunakan.
+- Fetch API:
+    - Menggunakan promise, sehingga syntax yang digunakan lebih mudah dipahami
+    - Memberikan tingkat fleksibilitas dan kontrol yang tinggi dengan berbagai ospi
+- jQuery:
+    - Syntax yang digunakan pada jQuery relatif singkat dan sederhana
+    - Mungkin perlu menyertakan beberapa settings tambahan jika ingin memiliki tingkat kontrol dan fleksibilitas yang lebih tinggi
+
+Menurut saya, teknologi Fetch API lebih baik untuk digunakan. Hal ini dikarenakan tingkal fleksibilitas dan ktonrol yang tinggi. Selain itu, Fetch API juga lebih modern, sehingga akan lebih compatible.
+<hr>
+
+## 5. Jelaskan bagaimana cara kamu mengimplementasikan checklist di atas secara step-by-step (bukan hanya sekadar mengikuti tutorial).
+- Membuat fungsi untuk mengembalikan data JSON
+    ```python
+    def get_product_json(request):
+        product_item = Product.objects.all()
+        return HttpResponse(serializers.serialize('json', product_item))
+    ```
+- Membuat fungsi menambahkan produk dengan AJAX
+- Menambahkan routing untuk fungsi get_product_json dan add_product_ajax
+- Menampilkan data product dengan Fetch API
+   ```html
+   <div id="product_table"></div>
+   <script>
+    async function getProducts() {
+        return fetch("{% url 'main:get_product_json' %}").then((res) => res.json())
+    }
+   </script>
+   ```
+- Membuat fungsi pada AJAX product dan menambahkan modal sebagai card dilengkapi dengan ajax add product, increment product, decrement, dan remove 
+    ```html
+    <script>
+      async function getProducts() {
+         return fetch("{% url 'main:get_product_json' %}").then((res) => res.json())
+      }
+
+      async function refreshProducts() {
+         document.getElementById("product_table").innerHTML = ""
+         const products = await getProducts()
+         let htmlString = `<div class="card-container">`
+         products.forEach((item, index) => {
+               htmlString += `\n
+               <div class="card" style="width: 22rem; padding:1%;margin-left: 30px; padding-left:10 px padding-bottom:10px; padding-right: 10px ;">
+                  <div class="card-body ">
+                     <h5 class="card-title">${ item.fields.name }</h5>
+                     <p class="card-text">
+                           <table>
+                              <tr class="add-colortext">
+                                 <td>Price</td>
+                                 <td>${ item.fields.price }</td>
+                              </tr>
+                              <tr class="add-colortext">
+                                 <td>Amount</td>
+                                 <td>${ item.fields.amount }</td>
+                              </tr>
+                              <tr class="add-colortext">
+                                 <td>Description</td>
+                                 <td>${ item.fields.description }</td>
+                              </tr>
+                              <tr class="add-colortext">
+                                 <td>Date Added</td>
+                                 <td>${ item.fields.date_added }</td>
+                              </tr>
+                           </table>
+                           <table>
+                              <tr class="add-colortext">
+                                 <td>
+                                       <form action="add_product/${item.pk}/" method="post">
+                                          {% csrf_token %}
+                                          <button class="font-bold py-1 px-4 rounded edit-button border-0"
+                                             style="color: rgb(0, 0, 0); font-weight: bolder; align-items: center" type="submit"
+                                             name="Tambah" style="padding: 10px 20px;" onclick="incrementAmount(${item.pk})">
+                                             +
+                                          </button>
+                                       </form>
+                                 </td>
+                                 <td>
+                                       <form action="decrement_product/${item.pk}/" method="post">
+                                          {% csrf_token %}
+                                          <button class="font-bold py-1 px-4 rounded edit-button border-0"
+                                             style="color: rgb(0, 0, 0); font-weight: bolder; align-items: center" type="submit"
+                                             name="Kurang" style="padding: 10px 20px;" onclick="decrementAmount(${item.pk})">
+                                             -
+                                          </button>
+                                       </form>
+                                 </td>
+                                 <td>
+                                       <form action="remove_product/${item.pk}/" method="post">
+                                          {% csrf_token %}
+                                          <button class="font-bold py-1 px-4 rounded edit-button border-0"
+                                             style="color: red; align-items: center" type="submit" name="Hapus" class="edit-button"
+                                             style="padding: 10px 20px;" onclick="deleteProduct(${item.pk})">
+                                             delete
+                                          </button>
+                                       </form>
+                                 </td>
+                                 <td>
+                                       <a href="edit-product/${item.pk}">
+                                          <button class="font-bold py-1 px-4 rounded edit-button border-0" style="padding: 10px 20px;">
+                                             Edit
+                                          </button>
+                                       </a>    
+                                 </td>
+                              </tr>
+                           </table>
+                     </p>
+                  </div>
+               </div>` 
+         })
+         
+         document.getElementById("product_table").innerHTML = htmlString
+      }
+
+      async function incrementAmount(id) {
+         const response = await fetch(`/increment-amount/${id}`);
+         refreshProducts();
+      }
+
+      async function decrementAmount(id) {
+         const response = await fetch(`/decrement-amount/${id}`);
+         refreshProducts();
+      }
+      async function deleteProduct(id) {
+      const response = await fetch(`/delete-amount/${id}`);
+         refreshProducts();
+      }
+
+      refreshProducts()
+
+      function addProduct() {
+         fetch("{% url 'main:add_product_ajax' %}", {
+               method: "POST",
+               body: new FormData(document.querySelector('#form'))
+         }).then(refreshProducts)
+
+         document.getElementById("form").reset()
+         return false
+      }
+
+      document.getElementById("button_add").onclick = addProduct
+   </script>
+   ```
+
+- Melakukan git add , commit , push 
+- Melakukan deployment 
+
+**link deployment**
+http://rakha-abid-tugas.pbp.cs.ui.ac.id/

@@ -978,4 +978,4 @@ Menurut saya, teknologi Fetch API lebih baik untuk digunakan. Hal ini dikarenaka
 - Melakukan deployment 
 
 **link deployment**
-http://rakha-abid-tugas.pbp.cs.ui.ac.id/
+https://artomoroweb.35.209.250.177.sslip.io/

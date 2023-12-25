@@ -32,7 +32,7 @@ PRODUCTION = env.bool('PRODUCTION', False)
 DEBUG = True
 
 ALLOWED_HOSTS = ["*"]
-CSRF_TRUSTED_ORIGINS = ["https://o0kwwgw.35.209.250.177.sslip.io"]
+CSRF_TRUSTED_ORIGINS = ["https://artomoroweb.35.209.250.177.sslip.io"]
 
 # Application definition
 
